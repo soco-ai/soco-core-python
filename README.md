@@ -2,7 +2,7 @@
 Python client to use SOCO answer-as-as-service platform.
 
 ## Install 
-    pip install xxx
+    pip install soco-core-python
     
 ## Quick Start
 
@@ -11,8 +11,8 @@ This following example can be found at: quick_start.py. To see more examples, ch
 First of all, register at https://app.soco.ai. After get your API_KEYs, you can setup a answer answer 
 using 10 lines of code!
 
-    QUERY_API_KEY = '727bb6b3-455c-4ee5-8f48-c2ab95837e56'
-    ADMIN_API_KEY = '898706a0-ecb2-457d-8f89-eea1c406f0ca'
+    QUERY_API_KEY = ENTER_YOUR_QUERY_API_KEY_HERE
+    ADMIN_API_KEY = ENTER_YOUR_ADMIN_API_KEY_HERE
 
     q_client = SOCOClient(QUERY_API_KEY)
     a_client = SOCOClient(ADMIN_API_KEY)

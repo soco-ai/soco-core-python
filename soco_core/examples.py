@@ -23,4 +23,4 @@ def load_example_doc_data(name):
 if __name__ == '__main__':
     x = load_example_frame_data('mr.sun')
     print(x)
-    json.dump(x, open('mr-sun-frames.json', 'w'), indent=2)
+    json.dump(x, open('../resources/mr-sun-frames.json', 'w'), indent=2)

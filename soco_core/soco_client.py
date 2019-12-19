@@ -55,6 +55,7 @@ class SOCOClient(object):
 
     def replace_index(self, data, batch_size=100):
         job_results = []
+        print("Upload {} frames".format(len(data)))
         for batch, is_last in tqdm(self._chunks(data, n=batch_size), desc='replacing index'):
             data = {
                 "data": batch,
