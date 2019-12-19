@@ -6,7 +6,7 @@ def load_example_frame_data(name):
     cur_path = os.path.dirname(os.path.abspath(__file__))
     if name == 'mr.sun':
         doc = json.load(open(os.path.join(cur_path, '..', 'resources/mr-sun.json')))
-        frames = DocConvert.document_to_frames(doc)
+        frames = DocConvert.document_to_frames(doc, doc_meta={'doc_id': 'mr.sun', 'doc_title': 'Our Mr. Sun'})
         return frames
     else:
         raise Exception("Unknown {} frame example".format(name))

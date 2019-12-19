@@ -47,7 +47,7 @@ class SOCOClient(object):
             }
             result = requests.post(self.append_url, json=data, headers=self._get_header())
             if result.status_code >= 300:
-                print("Error in appending to the SOCO servers")
+                print("Error in appending to index at SOCO servers")
                 return None
             job_results.append(json.loads(result.text))
 
@@ -60,9 +60,9 @@ class SOCOClient(object):
                 "data": batch,
                 "is_last": is_last,
             }
-            result = requests.post(self.append_url, json=data, headers=self._get_header())
+            result = requests.post(self.replace_url, json=data, headers=self._get_header())
             if result.status_code >= 300:
-                print("Error in appending to the SOCO servers")
+                print("Error in replacing index at SOCO servers")
                 return None
             job_results.append(json.loads(result.text))
 
