@@ -19,6 +19,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires = [
-        'nltk >= 3.4'
+        'nltk >= 3.4',
+        'tqdm >= 4.32.1'
     ]
 )
