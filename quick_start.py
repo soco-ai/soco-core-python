@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     print("## Add some data to the index")
     data = load_example_frame_data('mr.sun')
-    a_client.append_to_index(data)
+    a_client.replace_index(data)
 
     print("## Wait for indexing is done ... ")
     a_client.wait_for_ready(check_frequency=2, timeout=10, verbose=False)
