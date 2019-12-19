@@ -31,11 +31,11 @@ using 10 lines of code!
 ## Citation
 If you use SOCO in research, we would love to be cited:
 
-    ```latex
+```latex
     @misc{soco2019engine,
       title={SOCO: Answer Engine Platform},
       author={Tiancheng Zhao and Kyusong Lee},
       howpublished={\url{https://github.com/ConvMind/soco-core-python}},
       year={2019}
     }
-    ```
+```
