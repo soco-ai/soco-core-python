@@ -10,6 +10,9 @@ This following example can be found at: quick_start.py. To see more examples, ch
 
 First of all, register at https://app.soco.ai. After get your API_KEYs, you can setup a answer answer 
 using 10 lines of code!
+    
+    from soco_core.soco_client import SOCOClient
+    from soco_core.examples import load_example_frame_data
 
     QUERY_API_KEY = ENTER_YOUR_QUERY_API_KEY_HERE
     ADMIN_API_KEY = ENTER_YOUR_ADMIN_API_KEY_HERE
