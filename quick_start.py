@@ -13,8 +13,8 @@ if __name__ == '__main__':
     a_client.replace_index(data)
 
     print("## Wait for indexing is done ... ")
-    a_client.wait_for_ready(check_frequency=2, timeout=10, verbose=False)
+    a_client.wait_for_ready(check_frequency=2, timeout=-1, verbose=False)
 
     print("## Make a query")
-    responses = q_client.query("how many images", 10)
+    responses = q_client.query("what is the distance from earth to sun?", 10)
     SOCOClient.pprint(responses)

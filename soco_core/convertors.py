@@ -24,8 +24,7 @@ class DocConvert(object):
                 break
 
             text = data[idx]['text']
-            if data[idx]['type'] == 'title' and text not in prev_context:
-                prev_context.append(text)
+            if data[idx]['type'] in ['title', 'section']:
                 break
 
             if text not in prev_context:
@@ -61,6 +60,39 @@ class DocConvert(object):
         return {'context': context, 'answer_start': answer_start, 'answer': answer}
 
     @classmethod
+    def context2frame(cls, context, meta):
+        frames = []
+        if len(context['answer'].split()) < 10:
+            context['meta'] = meta
+            frames.append(context)
+        else:
+            original_answer = context['answer']
+            tokens = original_answer.split()
+            window_len = 10
+            stride_len = 5
+            s_id = 0
+            e_id = min(window_len, len(tokens))
+            while True:
+                segment = tokens[s_id:e_id]
+                answer = ' '.join(segment)
+                prefix_offset = original_answer.index(answer)
+                f = {'context': context['context'], 'answer': answer,
+                     'answer_start': context['answer_start']+prefix_offset,
+                     'meta': meta}
+                frames.append(f)
+                assert context['context'][f['answer_start']:f['answer_start']+len(f['answer'])] == f['answer']
+                if e_id >= len(tokens):
+                    break
+
+                s_id += stride_len
+                e_id = s_id + window_len
+        return frames
+
+    @classmethod
+    def normalize_whitespace(cls, text):
+        return text.replace('\n', ' ').replace('\r', '').replace('\t', '').replace('\xa0', ' ')
+
+    @classmethod
     def document_to_frames(cls, doc, doc_meta=None):
 
         # CUT DOCUMENTS INTO SENTENCES
@@ -72,6 +104,8 @@ class DocConvert(object):
             text = chunk['text']
             if text is None:
                 continue
+
+            text = cls.normalize_whitespace(text)
             uid = str(uuid4())
             chunk_type = chunk.get('type')
 
@@ -101,7 +135,6 @@ class DocConvert(object):
         for f_id, f_data in enumerate(flatten_data):
             chunk_type = f_data['type']
             text = f_data['text']
-            answer_start = f_data['answer_start']
             if chunk_type == 'title':
                 last_title = text
             elif chunk_type == 'section':
@@ -117,9 +150,9 @@ class DocConvert(object):
             meta = {'chunk_id': f_data['chunk_id'], 'chunk_type': chunk_type}
             if doc_meta is not None:
                 meta.update(**doc_meta)
-            frame = context
-            frame['meta'] = meta
-            frames.append(frame)
+            frame = cls.context2frame(context, meta)
+
+            frames.extend(frame)
 
         print("DONE PROCESS {} RAW DOCUMENTS with {} too short skip {} too long skip".format(len(frames),
                                                                                              too_short_cnt,

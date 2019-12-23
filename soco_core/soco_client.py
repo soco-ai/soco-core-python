@@ -63,7 +63,11 @@ class SOCOClient(object):
             }
             result = requests.post(self.replace_url, json=data, headers=self._get_header())
             if result.status_code >= 300:
-                print("Error in replacing index at SOCO servers")
+                try:
+                    error_data = json.loads(result.text)
+                    print(error_data)
+                except:
+                    print("Error in replacing index at SOCO servers")
                 return None
             job_results.append(json.loads(result.text))
 
