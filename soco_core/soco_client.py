@@ -38,13 +38,14 @@ class SOCOClient(object):
 
         return json.loads(result.text)
 
-    def append_to_index(self, data, batch_size=100):
+    def append_to_index(self, data, batch_size=100, **kwargs):
         job_results = []
         for batch, is_last in tqdm(self._chunks(data, n=batch_size), desc='appending to index'):
             data = {
                 "data": batch,
                 "is_last": is_last,
             }
+            data.update(**kwargs)
             result = requests.post(self.append_url, json=data, headers=self._get_header())
             if result.status_code >= 300:
                 print("Error in appending to index at SOCO servers")
@@ -53,7 +54,7 @@ class SOCOClient(object):
 
         return job_results
 
-    def replace_index(self, data, batch_size=100):
+    def replace_index(self, data, batch_size=100, **kwargs):
         job_results = []
         print("Upload {} frames".format(len(data)))
         for batch, is_last in tqdm(self._chunks(data, n=batch_size), desc='replacing index'):
@@ -61,6 +62,7 @@ class SOCOClient(object):
                 "data": batch,
                 "is_last": is_last,
             }
+            data.update(**kwargs)
             result = requests.post(self.replace_url, json=data, headers=self._get_header())
             if result.status_code >= 300:
                 try:
