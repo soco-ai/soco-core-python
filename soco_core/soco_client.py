@@ -57,7 +57,7 @@ class SOCOClient(object):
     def replace_index(self, data, batch_size=100, **kwargs):
         job_results = []
         print("Upload {} frames".format(len(data)))
-        for batch, is_last in tqdm(self._chunks(data, n=batch_size), desc='replacing index'):
+        for batch, is_last in tqdm(self._chunks(data, n=batch_size), desc='replacing index', total=len(data)/batch_size):
             data = {
                 "data": batch,
                 "is_last": is_last,
@@ -71,6 +71,7 @@ class SOCOClient(object):
                 except:
                     print("Error in replacing index at SOCO servers")
                 return None
+
             job_results.append(json.loads(result.text))
 
         return job_results

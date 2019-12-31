@@ -1,15 +1,17 @@
-import nltk
-from soco_core import utils
+from soco_core.nlp import sentence_splitter
 from uuid import uuid4
+import re
 
 
 class DocConvert(object):
     @classmethod
-    def split_sentence(cls, sentence, version='nltk'):
-        if version == 'nltk':
-            return nltk.sent_tokenize(sentence)
+    def split_sentence(cls, sentence, language='english'):
+        if language == 'english':
+            return sentence_splitter.en_split_sentence(sentence)
+        elif language == 'chinese':
+            return sentence_splitter.zh_split_sentence(sentence)
         else:
-            return utils.split_sentence(sentence)
+            raise Exception("Unsupported language {}".format(language))
 
     @classmethod
     def _get_context(cls, data, current_idx, prev_char, next_char, last_title, last_section):
@@ -61,39 +63,17 @@ class DocConvert(object):
 
     @classmethod
     def context2frame(cls, context, meta):
-        frames = []
-        if len(context['answer'].split()) < 10:
-            context['meta'] = meta
-            frames.append(context)
-        else:
-            original_answer = context['answer']
-            tokens = original_answer.split()
-            window_len = 10
-            stride_len = 5
-            s_id = 0
-            e_id = min(window_len, len(tokens))
-            while True:
-                segment = tokens[s_id:e_id]
-                answer = ' '.join(segment)
-                prefix_offset = original_answer.index(answer)
-                f = {'context': context['context'], 'answer': answer,
-                     'answer_start': context['answer_start']+prefix_offset,
-                     'meta': meta}
-                frames.append(f)
-                assert context['context'][f['answer_start']:f['answer_start']+len(f['answer'])] == f['answer']
-                if e_id >= len(tokens):
-                    break
-
-                s_id += stride_len
-                e_id = s_id + window_len
+        context['meta'] = meta
+        frames = [context]
         return frames
 
     @classmethod
     def normalize_whitespace(cls, text):
-        return text.replace('\n', ' ').replace('\r', '').replace('\t', '').replace('\xa0', ' ')
+        text= text.replace('\n', ' ').replace('\r', '').replace('\t', '').replace('\xa0', ' ')
+        return text
 
     @classmethod
-    def document_to_frames(cls, doc, doc_meta=None):
+    def document_to_frames(cls, doc, doc_meta=None, verbose=False):
 
         # CUT DOCUMENTS INTO SENTENCES
         flatten_data = []
@@ -154,7 +134,8 @@ class DocConvert(object):
 
             frames.extend(frame)
 
-        print("DONE PROCESS {} RAW DOCUMENTS with {} too short skip {} too long skip".format(len(frames),
-                                                                                             too_short_cnt,
-                                                                                             too_long_cnt))
+        if verbose:
+            print("DONE PROCESS {} RAW DOCUMENTS with {} too short skip {} too long skip".format(len(frames),
+                                                                                                 too_short_cnt,
+                                                                                                 too_long_cnt))
         return frames

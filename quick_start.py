@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     print("## Add some data to the index")
     data = load_example_frame_data('mr.sun')
-    a_client.replace_index(data)
+    a_client.replace_index(data, db_encoder_id='bert-base-uncase-answer-squad-4head')
 
     print("## Wait for indexing is done ... ")
     a_client.wait_for_ready(check_frequency=2, timeout=-1, verbose=False)
