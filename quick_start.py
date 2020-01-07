@@ -9,8 +9,7 @@ if __name__ == '__main__':
     print("Add some data to the index")
     frames = load_example_frame_data('mr.sun')
     print("Loaded {} frames.".format(len(frames)))
-    a_client.replace_index(frames, sync=True, db_encoder_id='bert-base-uncase-answer-squad-4head')
-
+    a_client.replace_index(frames, sync=True, db_encoder_id='bert-base-uncase-answer-squad-4head', batch_size=10)
 
     print("Make a query")
     QUERY_API_KEY = '727bb6b3-455c-4ee5-8f48-c2ab95837e56'
