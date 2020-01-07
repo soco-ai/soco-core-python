@@ -1,18 +1,9 @@
-from soco_core.nlp import sentence_splitter
+from soco_core import sentence_splitter
 from uuid import uuid4
 import re
 
 
 class DocConvert(object):
-    @classmethod
-    def split_sentence(cls, sentence, language='english'):
-        if language == 'english':
-            return sentence_splitter.en_split_sentence(sentence)
-        elif language == 'chinese':
-            return sentence_splitter.zh_split_sentence(sentence)
-        else:
-            raise Exception("Unsupported language {}".format(language))
-
     @classmethod
     def _get_context(cls, data, current_idx, prev_char, next_char, last_title, last_section):
         answer = data[current_idx]['text']
@@ -59,21 +50,33 @@ class DocConvert(object):
         context = ' '.join(prev_context + [answer] + next_context)
         answer_start = len(' '.join(prev_context)) + 1 if len(prev_context) > 0 else 0
         assert context[answer_start:answer_start + len(answer)] == answer
-        return {'context': context, 'answer_start': answer_start, 'answer': answer}
+        return {'context': context,
+                'answer_start': answer_start,
+                'value': answer,
+                'displayable': False,
+                'add_to_qa_index': True}
 
     @classmethod
-    def context2frame(cls, context, meta):
-        context['meta'] = meta
-        frames = [context]
-        return frames
-
-    @classmethod
-    def normalize_whitespace(cls, text):
+    def _normalize_whitespace(cls, text):
         text= text.replace('\n', ' ').replace('\r', '').replace('\t', '').replace('\xa0', ' ')
         return text
 
     @classmethod
-    def document_to_frames(cls, doc, doc_meta=None, verbose=False):
+    def context2frame(cls, context, meta):
+        frame = {'answer': context, 'meta': meta}
+        return frame
+
+    @classmethod
+    def get_context_size(cls, lang):
+        if lang == 'en':
+            return 150
+        elif lang == 'zh':
+            return 75
+        else:
+            raise Exception("unknown language {}".format(lang))
+
+    @classmethod
+    def document_to_frames(cls, doc, lang, doc_meta=None, verbose=False, min_ans_len=5, max_ans_len=500):
 
         # CUT DOCUMENTS INTO SENTENCES
         flatten_data = []
@@ -85,7 +88,7 @@ class DocConvert(object):
             if text is None:
                 continue
 
-            text = cls.normalize_whitespace(text)
+            text = cls._normalize_whitespace(text)
             uid = str(uuid4())
             chunk_type = chunk.get('type')
 
@@ -93,13 +96,13 @@ class DocConvert(object):
                 record = {'text': text, 'chunk_id': uid, 'type': chunk_type, 'answer_start': 0}
                 flatten_data.append(record)
             else:
-                sentences = cls.split_sentence(text)
+                sentences = sentence_splitter.split_sentence(text, lang=lang)
                 for s in sentences:
-                    if len(s) < 7:
+                    if len(s) < min_ans_len:
                         too_short_cnt += 1
                         continue
 
-                    if len(s) > 500:
+                    if len(s) > max_ans_len:
                         too_long_cnt += 1
                         continue
 
@@ -108,7 +111,7 @@ class DocConvert(object):
                     flatten_data.append(record)
                     assert text[answer_start:answer_start + len(s)] == s
 
-        # INDEX RAW SENTENCES AS ANSWERS
+        # INDEX RAW SENTENCES AS FRAMES
         last_title = ''
         last_section = ''
         frames = []
@@ -120,11 +123,12 @@ class DocConvert(object):
             elif chunk_type == 'section':
                 last_section = text
 
+            context_size = cls.get_context_size(lang)
             if chunk_type in ['title', 'section']:
-                context = cls._get_context(flatten_data, f_id, prev_char=0, next_char=150,
+                context = cls._get_context(flatten_data, f_id, prev_char=0, next_char=context_size,
                                            last_title=last_title, last_section=last_section)
             else:
-                context = cls._get_context(flatten_data, f_id, prev_char=150, next_char=150,
+                context = cls._get_context(flatten_data, f_id, prev_char=context_size, next_char=context_size,
                                            last_title=last_title, last_section=last_section)
 
             meta = {'chunk_id': f_data['chunk_id'], 'chunk_type': chunk_type}
@@ -132,7 +136,7 @@ class DocConvert(object):
                 meta.update(**doc_meta)
             frame = cls.context2frame(context, meta)
 
-            frames.extend(frame)
+            frames.append(frame)
 
         if verbose:
             print("DONE PROCESS {} RAW DOCUMENTS with {} too short skip {} too long skip".format(len(frames),

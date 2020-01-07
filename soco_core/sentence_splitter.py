@@ -1,6 +1,14 @@
 import re
 
 
+def split_sentence(sentence, lang='en'):
+    if lang == 'en':
+        return en_split_sentence(sentence)
+    elif lang == 'zh':
+        return zh_split_sentence(sentence)
+    else:
+        raise Exception("Unsupported language {}".format(lang))
+
 def zh_split_sentence(text):
     resentencesp = re.compile('([\t﹒﹔﹖﹗．；。！？]["’”」』]{0,2}|：(?=["‘“「『]{1,2}|$))')
 
