@@ -10,6 +10,7 @@ class SOCOClient(object):
     def __init__(self, api_key):
         self.api_key = api_key
         self.query_url = 'https://api.soco.ai/v1/search/query'
+        self.aggregate_url = 'https://api.soco.ai/v1/search/aggregate'
         self.status_url = 'https://api.soco.ai/v1/index/status'
         self.append_url = 'https://api.soco.ai/v1/index/append'
         self.replace_url = 'https://api.soco.ai/v1/index/replace'
@@ -71,7 +72,23 @@ class SOCOClient(object):
         }
         args = {'alpha_bm25': alpha_bm25, 'use_mrc': use_mrc, 'max_l2r': max_l2r, 'filters': filters}
         data.update(**args)
-        result = requests.post(self.query_url, json=data, headers=self._get_header())
+        result = requests.post(self.query_url, json=data, headers=self._get_header(), timeout=60)
+        if result.status_code >= 300:
+            print("Error in connecting to the SOCO servers")
+            return None
+
+        return json.loads(result.text)
+
+    def aggregate(self, query, size, query_args, agg_args, uid=None):
+        data = {
+            "query": query,
+            "n_best": size,
+            "uid": uid if uid is not None else str(uuid4()),
+            "query_args": query_args,
+            "agg_args": agg_args
+        }
+        result = requests.post(self.aggregate_url, json=data, headers=self._get_header(),
+                               timeout=60)
         if result.status_code >= 300:
             print("Error in connecting to the SOCO servers")
             return None

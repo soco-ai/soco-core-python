@@ -134,6 +134,7 @@ class DocConvert(object):
             meta = {'chunk_id': f_data['chunk_id'], 'chunk_type': chunk_type}
             if doc_meta is not None:
                 meta.update(**doc_meta)
+
             frame = cls.context2frame(context, meta)
 
             frames.append(frame)
