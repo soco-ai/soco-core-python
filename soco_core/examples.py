@@ -14,8 +14,9 @@ def load_example_frame_data(name):
 
 
 def load_example_doc_data(name):
+    cur_path = os.path.dirname(os.path.abspath(__file__))
     if name == 'mr.sun':
-        doc = json.load('../resources/mr-sun.json')
+        doc = json.load(open(os.path.join(cur_path, '..', 'resources/mr-sun.json')))
         return doc
     else:
         raise Exception("Unknown {} frame example".format(name))

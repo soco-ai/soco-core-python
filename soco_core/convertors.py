@@ -77,7 +77,6 @@ class DocConvert(object):
 
     @classmethod
     def document_to_frames(cls, doc, lang, doc_meta=None, verbose=False, min_ans_len=5, max_ans_len=500):
-
         # CUT DOCUMENTS INTO SENTENCES
         flatten_data = []
         too_short_cnt = 0
