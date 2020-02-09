@@ -10,6 +10,7 @@ class SOCOClient(object):
     def __init__(self, api_key):
         self.api_key = api_key
         self._server_url = 'https://api.soco.ai'
+        # self._server_url = 'http://localhost:6001'
 
         # MONITOR
         self.status_url = self._server_url + '/v1/index/status'
@@ -157,24 +158,30 @@ class SOCOClient(object):
 
     def delete_data(self, doc_ids=None):
         if doc_ids is None:
+            print("Delete all data")
             result = requests.post(self.delete_url, headers=self._get_header())
         else:
             result = requests.post(self.delete_url,
-                                           json={'doc_ids': doc_ids},
-                                           headers=self._get_header())
+                                   json={'doc_ids': doc_ids},
+                                   headers=self._get_header())
         return result
 
-    def publish(self, encoder_id, db_encoder_id, publish_args):
+    def publish(self, encoder_id, db_encoder_id, publish_args, sync=True):
         body = {'encoder_id': encoder_id,
                 'db_encoder_id': db_encoder_id,
                 'publish_args': publish_args}
         result = requests.post(self.publish_url, json=body, headers=self._get_header())
         if result.status_code > 299:
             raise Exception(result.json())
+        if sync:
+            self.wait_for_ready(verbose=True)
         return result
 
-    def abort(self):
+    def abort(self, sync=True):
         result = requests.post(self.abort_url, headers=self._get_header())
+        if sync:
+            self.wait_for_ready(verbose=True)
+
         return result
 
 

@@ -31,7 +31,6 @@ Third, publish the indeex
                          "num_shard": 6,
                          "encode_args": {"min_threshold": 1e-3, "top_k": 2000, "term_batch_size": 2000}
                      })
-    a_client.wait_for_ready(verbose=True)
 
 Now you are ready to query the index!
 

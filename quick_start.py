@@ -7,8 +7,9 @@ if __name__ == '__main__':
 
     # add data
     print("Add some data to the index")
-    doc = load_example_doc_data('mr.sun')
-    a_client.add_data([doc])
+    docs = load_example_doc_data(['mr-sun.json', 'technology.json'])
+    a_client.delete_data()
+    a_client.add_data(docs)
     print("Read {} documents".format(len(a_client.read_data())))
 
     print("Publish the index")
@@ -19,7 +20,6 @@ if __name__ == '__main__':
                          "num_shard": 6,
                          "encode_args": {"min_threshold": 1e-3, "top_k": 2000, "term_batch_size": 2000}
                      })
-    a_client.wait_for_ready(verbose=True)
 
     print("Make a query")
     QUERY_API_KEY = '727bb6b3-455c-4ee5-8f48-c2ab95837e56'
