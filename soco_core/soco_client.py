@@ -16,7 +16,7 @@ class SOCOClient(object):
         self.status_url = self._server_url + '/v1/index/status'
 
         # QUERY
-        self.query_url = self._server_url + '/v1/search/query'
+        self.query_url = self._server_url + '/v2/search/query'
         self.aggregate_url = self._server_url + '/v1/search/aggregate'
 
         # INDEX
@@ -34,7 +34,7 @@ class SOCOClient(object):
             if f not in object['answer']:
                 raise Exception("{} is required inside answer".format(f))
 
-    def check_frame_format(self, data):
+    def _check_frame_format(self, data):
         for frame in data:
             if 'answer' not in frame:
                 raise Exception("answer is required for frame")
@@ -47,7 +47,7 @@ class SOCOClient(object):
                 for q in frame['questions']:
                     self._check_fields(['value'], q)
 
-    def check_doc_format(self, data):
+    def _check_doc_format(self, data):
         for doc in data:
             if 'data' not in doc:
                 raise Exception("data is required for a doc")
@@ -131,7 +131,7 @@ class SOCOClient(object):
             print("({}) - {}".format(r['score'], r['a']['value']))
 
     def add_data(self, data):
-        self.check_doc_format(data)
+        self._check_doc_format(data)
         job_results = []
         batch_size = 100
         for batch in tqdm(self._chunks(data, n=batch_size), desc='Adding {} docs to task'.format(len(data))):
@@ -144,10 +144,10 @@ class SOCOClient(object):
 
         return job_results
 
-    def read_data(self):
+    def read_data(self, batch_size=100):
         data = []
         skip = 0
-        limit = 28
+        limit = batch_size
         while True:
             results = requests.post(self.read_url, json={'skip': skip, 'limit': limit}, headers=self._get_header())
             batch_docs = results.json()
@@ -156,7 +156,6 @@ class SOCOClient(object):
                 break
             skip = len(data)
 
-        print("Read {} documents".format(len(data)))
         return data
 
     def delete_data(self, doc_ids=None):
@@ -167,4 +166,16 @@ class SOCOClient(object):
                                            json={'doc_ids': doc_ids},
                                            headers=self._get_header())
         return result
+
+    def publish(self, encoder_id, db_encoder_id, publish_args):
+        body = {'encoder_id': encoder_id,
+                'db_encoder_id': db_encoder_id,
+                'publish_args': publish_args}
+        result = requests.post(self.publish_url, json=body, headers=self._get_header())
+        return result
+
+    def abort(self):
+        result = requests.post(self.abort_url, headers=self._get_header())
+        return result
+
 
