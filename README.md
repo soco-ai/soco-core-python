@@ -9,24 +9,36 @@ Python client to use SOCO answer-as-as-service platform.
 This following example can be found at: quick_start.py. To see more examples, check out /examples folder
 
 First of all, register at https://app.soco.ai. After get your API_KEYs, you can setup a answer answer 
-using 10 lines of code!
+using a few lines of code!
+
+First, import the SOCO client
     
     from soco_core.soco_client import SOCOClient
-    from soco_core.examples import load_example_frame_data
-    
-    ADMIN_API_KEY = '898706a0-ecb2-457d-8f89-eea1c406f0ca'
+    from soco_core.examples import load_example_doc_data
+
+Second add some data to the index
+
     a_client = SOCOClient(ADMIN_API_KEY)
+    doc = load_example_doc_data('mr.sun')
+    a_client.add_data([doc])
 
-    print("Add some data to the index")
-    frames = load_example_frame_data('mr.sun')
-    print("Loaded {} frames.".format(len(frames)))
-    a_client.replace_index(frames, sync=True, db_encoder_id='bert-base-uncase-answer-squad-4head', batch_size=10)
+Third, publish the indeex
 
-    print("Make a query")
-    QUERY_API_KEY = '727bb6b3-455c-4ee5-8f48-c2ab95837e56'
+    a_client.abort() # abort any existing publish just in case.
+    a_client.publish('bert-base-uncased', 'bert-base-uncase-ti-log-max-320head-snm',
+                     publish_args={
+                         "es_version": "tscore",
+                         "num_shard": 6,
+                         "encode_args": {"min_threshold": 1e-3, "top_k": 2000, "term_batch_size": 2000}
+                     })
+    a_client.wait_for_ready(verbose=True)
+
+Now you are ready to query the index!
+
     q_client = SOCOClient(QUERY_API_KEY)
     responses = q_client.query("what is the distance from earth to sun?", 10)
     SOCOClient.pprint(responses)
+    
     
 ## Citation
 If you use SOCO in research, we would love to be cited:
