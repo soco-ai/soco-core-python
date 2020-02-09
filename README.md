@@ -35,7 +35,7 @@ If you use SOCO in research, we would love to be cited:
     @misc{soco2019engine,
       title={SOCO: Answer Engine Platform},
       author={Tiancheng Zhao and Kyusong Lee},
-      howpublished={\url{https://github.com/ConvMind/soco-core-python}},
+      howpublished={\url{https://github.com/soco-ai/soco-core-python}},
       year={2019}
     }
 ```

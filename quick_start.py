@@ -4,6 +4,7 @@ from soco_core.examples import load_example_doc_data
 if __name__ == '__main__':
     ADMIN_API_KEY = '898706a0-ecb2-457d-8f89-eea1c406f0ca'
     a_client = SOCOClient(ADMIN_API_KEY)
+    a_client.abort()
 
     print("Read {} documents".format(len(a_client.read_data())))
     a_client.delete_data()

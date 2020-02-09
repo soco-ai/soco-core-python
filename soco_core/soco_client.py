@@ -10,7 +10,6 @@ class SOCOClient(object):
     def __init__(self, api_key):
         self.api_key = api_key
         self._server_url = 'https://api.soco.ai'
-        self._server_url = 'http://localhost:6000'
 
         # MONITOR
         self.status_url = self._server_url + '/v1/index/status'
@@ -97,8 +96,7 @@ class SOCOClient(object):
         data.update(**args)
         result = requests.post(self.query_url, json=data, headers=self._get_header(), timeout=60)
         if result.status_code >= 300:
-            print("Error in connecting to the SOCO servers")
-            return None
+            raise Exception("Error in connecting to the SOCO servers")
 
         return json.loads(result.text)
 
@@ -113,16 +111,15 @@ class SOCOClient(object):
         result = requests.post(self.aggregate_url, json=data, headers=self._get_header(),
                                timeout=60)
         if result.status_code >= 300:
-            print("Error in connecting to the SOCO servers")
-            return None
+            raise Exception("Error in connecting to the SOCO servers")
 
         return json.loads(result.text)
 
     def status(self):
         result = requests.get(self.status_url, headers=self._get_header())
         if result.status_code >= 300:
-            print("Error in connecting to the SOCO servers")
-            return None
+            raise Exception("Error in connecting to the SOCO servers")
+
         return json.loads(result.text)
 
     @classmethod
@@ -138,8 +135,8 @@ class SOCOClient(object):
             data = {"data": batch}
             result = requests.post(self.add_url, json=data, headers=self._get_header())
             if result.status_code >= 300:
-                print("Error in appending to index at SOCO servers")
-                return None
+                raise Exception("Error in appending to index at SOCO servers")
+
             job_results.append(json.loads(result.text))
 
         return job_results
@@ -172,6 +169,8 @@ class SOCOClient(object):
                 'db_encoder_id': db_encoder_id,
                 'publish_args': publish_args}
         result = requests.post(self.publish_url, json=body, headers=self._get_header())
+        if result.status_code > 299:
+            raise Exception(result.json())
         return result
 
     def abort(self):

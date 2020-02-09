@@ -9,6 +9,7 @@ def split_sentence(sentence, lang='en'):
     else:
         raise Exception("Unsupported language {}".format(lang))
 
+
 def zh_split_sentence(text):
     resentencesp = re.compile('([\t﹒﹔﹖﹗．；。！？]["’”」』]{0,2}|：(?=["‘“「『]{1,2}|$))')
 
