@@ -67,7 +67,7 @@ class SOCOClient(object):
             is_first = i == 0
             yield l[i:i + n]
 
-    def wait_for_ready(self, check_frequency=2, timeout=-1, verbose=False):
+    def wait_for_ready(self, check_frequency=15, timeout=-1, verbose=False):
         start_time = time.time()
         time.sleep(0.5)
         while True:
@@ -77,7 +77,12 @@ class SOCOClient(object):
 
             elapsed_time = int(time.time() - start_time)
             if verbose:
-                print("Have waited {} seconds with index size {}".format(int(time.time() - start_time), state['size']))
+                print("{} seconds elapsed. status={}. {}/{} indexed. {} frames completed.".format(
+                    int(time.time() - start_time),
+                    state['status'],
+                    state['publish_progress'],
+                    state['num_documents'],
+                    state['size']))
 
             if 0 < timeout < elapsed_time:
                 print("Time out!")
@@ -131,10 +136,12 @@ class SOCOClient(object):
     def add_data(self, data):
         self._check_doc_format(data)
         job_results = []
-        batch_size = 100
-        for batch in tqdm(self._chunks(data, n=batch_size), desc='Adding {} docs to task'.format(len(data))):
-            data = {"data": batch}
-            result = requests.post(self.add_url, json=data, headers=self._get_header())
+        batch_size = 50
+        for batch in tqdm(self._chunks(data, n=batch_size),
+                          desc='Uploading {} docs to task'.format(len(data)),
+                          total=len(data) / batch_size):
+            body = {"data": batch}
+            result = requests.post(self.add_url, json=body, headers=self._get_header())
             if result.status_code >= 300:
                 raise Exception("Error in appending to index at SOCO servers")
 
@@ -183,5 +190,3 @@ class SOCOClient(object):
             self.wait_for_ready(verbose=True)
 
         return result
-
-
