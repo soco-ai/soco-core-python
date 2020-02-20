@@ -89,8 +89,6 @@ class SOCOClient(object):
 
             time.sleep(check_frequency)
 
-        print("Index is ready!")
-
     def query(self, query, aggs=None, uid=None):
         data = {
             "query": query,
@@ -171,6 +169,8 @@ class SOCOClient(object):
             raise Exception(result.json())
         if sync:
             self.wait_for_ready(verbose=True)
+            print("Index is ready!")
+
         return result
 
     def abort(self, sync=True):
