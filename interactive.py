@@ -5,5 +5,5 @@ if __name__ == '__main__':
     q_client = SOCOClient(QUERY_API_KEY)
     while True:
         q = input("Enter a query\n")
-        resp = q_client.query(q, 5, alpha_bm25=0.01)
+        resp = q_client.query({'query': q, 'n_best': 5})
         q_client.pprint(resp)

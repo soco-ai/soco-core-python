@@ -13,13 +13,8 @@ if __name__ == '__main__':
     print("Read {} documents".format(len(a_client.read_data())))
 
     print("Publish the index")
-    a_client.abort()
-    a_client.publish('bert-base-uncased', 'bert-base-uncase-ti-log-max-320head-snm',
-                     publish_args={
-                         "es_version": "tscore",
-                         "num_shard": 6,
-                         "encode_args": {"min_threshold": 1e-3, "top_k": 2000, "term_batch_size": 2000}
-                     })
+    a_client.abort(sync=False)
+    a_client.publish()
 
     print("Make a query")
     QUERY_API_KEY = '727bb6b3-455c-4ee5-8f48-c2ab95837e56'

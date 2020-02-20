@@ -155,10 +155,17 @@ class SOCOClient(object):
                                    headers=self._get_header())
         return result
 
-    def publish(self, encoder_id, db_encoder_id, publish_args, sync=True):
-        body = {'encoder_id': encoder_id,
-                'db_encoder_id': db_encoder_id,
-                'publish_args': publish_args}
+    def publish(self, encoder_id=None, db_encoder_id=None, publish_args=None, sync=True):
+        body = {}
+        if encoder_id is not None:
+            body['encoder_id'] = encoder_id
+
+        if db_encoder_id is not None:
+            body['db_encoder_id'] = db_encoder_id
+
+        if publish_args is not None:
+            body['publish_args'] = publish_args
+
         result = requests.post(self.publish_url, json=body, headers=self._get_header())
         if result.status_code > 299:
             raise Exception(result.json())
