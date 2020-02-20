@@ -17,7 +17,6 @@ class SOCOClient(object):
 
         # QUERY
         self.query_url = self._server_url + '/v2/search/query'
-        self.aggregate_url = self._server_url + '/v1/search/aggregate'
 
         # INDEX
         self.publish_url = self._server_url + '/v1/index/publish'
@@ -92,30 +91,13 @@ class SOCOClient(object):
 
         print("Index is ready!")
 
-    def query(self, query, n_best, uid=None, alpha_bm25=0, use_mrc=False, max_l2r=-1, filters=None):
+    def query(self, query, aggs=None, uid=None):
         data = {
             "query": query,
-            "n_best": n_best,
+            "aggs": aggs,
             "uid": uid if uid is not None else str(uuid4())
         }
-        args = {'alpha_bm25': alpha_bm25, 'use_mrc': use_mrc, 'max_l2r': max_l2r, 'filters': filters}
-        data.update(**args)
         result = requests.post(self.query_url, json=data, headers=self._get_header(), timeout=60)
-        if result.status_code >= 300:
-            raise Exception("Error in connecting to the SOCO servers")
-
-        return json.loads(result.text)
-
-    def aggregate(self, query, size, query_args, agg_args, uid=None):
-        data = {
-            "query": query,
-            "n_best": size,
-            "uid": uid if uid is not None else str(uuid4()),
-            "query_args": query_args,
-            "agg_args": agg_args
-        }
-        result = requests.post(self.aggregate_url, json=data, headers=self._get_header(),
-                               timeout=60)
         if result.status_code >= 300:
             raise Exception("Error in connecting to the SOCO servers")
 
