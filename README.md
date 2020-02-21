@@ -2,7 +2,10 @@
 Python client to use SOCO answer-as-as-service platform.
 
 ## Install 
-    pip install soco-core-python
+    pip3 install soco-core-python
+    
+## Requirements
+    python 3
     
 ## Quick Start
 
