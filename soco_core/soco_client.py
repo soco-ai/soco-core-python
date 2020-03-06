@@ -7,16 +7,18 @@ from tqdm import tqdm
 
 
 class SOCOClient(object):
-    def __init__(self, api_key):
+    def __init__(self, api_key, host=None):
         self.api_key = api_key
-        self._server_url = 'https://api.soco.ai'
-        # self._server_url = 'http://localhost:6001'
+        if host is None:
+            self._server_url = 'https://api.soco.ai'
+        else:
+            self._server_url = host
 
         # MONITOR
         self.status_url = self._server_url + '/v1/index/status'
 
         # QUERY
-        self.query_url = self._server_url + '/v2/search/query'
+        self.query_url = self._server_url + '/v1/search/query'
 
         # INDEX
         self.publish_url = self._server_url + '/v1/index/publish'

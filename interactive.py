@@ -1,7 +1,7 @@
 from soco_core.soco_client import SOCOClient
 
 if __name__ == '__main__':
-    QUERY_API_KEY = '727bb6b3-455c-4ee5-8f48-c2ab95837e56'
+    QUERY_API_KEY = 'a9c46b81-642b-45ec-98f4-44adfc7d516c'
     q_client = SOCOClient(QUERY_API_KEY)
     while True:
         q = input("Enter a query\n")
