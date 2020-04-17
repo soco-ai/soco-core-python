@@ -98,7 +98,7 @@ class SOCOClient(object):
         }
         if aggs is not None:
             data['aggs'] = aggs
-            
+
         result = requests.post(self.query_url, json=data, headers=self._get_header(), timeout=60)
         if result.status_code >= 300:
             raise Exception("Error in connecting to the SOCO servers")
