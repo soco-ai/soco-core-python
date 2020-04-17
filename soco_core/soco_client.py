@@ -81,7 +81,7 @@ class SOCOClient(object):
                 print("{} seconds elapsed. status={}. {}/{} indexed. {} frames completed.".format(
                     int(time.time() - start_time),
                     state['status'],
-                    state['publish_progress'],
+                    state['index_progress'],
                     state['num_documents'],
                     state['size']))
 
