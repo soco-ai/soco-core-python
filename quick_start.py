@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     print("Publish the index")
     a_client.abort(sync=False)
-    a_client.publish()
+    a_client.reindex()
 
     print("Make a query")
     QUERY_API_KEY = '727bb6b3-455c-4ee5-8f48-c2ab95837e56'

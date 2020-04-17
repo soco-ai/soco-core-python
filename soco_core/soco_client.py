@@ -94,9 +94,11 @@ class SOCOClient(object):
     def query(self, query, aggs=None, uid=None):
         data = {
             "query": query,
-            "aggs": aggs,
             "uid": uid if uid is not None else str(uuid4())
         }
+        if aggs is not None:
+            data['aggs'] = aggs
+            
         result = requests.post(self.query_url, json=data, headers=self._get_header(), timeout=60)
         if result.status_code >= 300:
             raise Exception("Error in connecting to the SOCO servers")
@@ -115,14 +117,14 @@ class SOCOClient(object):
         for r in results['results']:
             print("({}) - {}".format(r['score'], r['a']['value']))
 
-    def add_data(self, data):
+    def add_data(self, data, auto_index=False):
         self._check_doc_format(data)
         job_results = []
         batch_size = 50
         for batch in tqdm(self._chunks(data, n=batch_size),
                           desc='Uploading {} docs to task'.format(len(data)),
                           total=len(data) / batch_size):
-            body = {"data": batch}
+            body = {"data": batch, 'auto_index': auto_index}
             result = requests.post(self.add_url, json=body, headers=self._get_header())
             if result.status_code >= 300:
                 raise Exception("Error in appending to index at SOCO servers {}".format(result.text))
@@ -145,27 +147,18 @@ class SOCOClient(object):
 
         return data
 
-    def delete_data(self, doc_ids=None):
+    def delete_data(self, doc_ids=None, auto_index=False):
+        body = {'auto_index': auto_index}
         if doc_ids is None:
             print("Delete all data")
-            result = requests.post(self.delete_url, headers=self._get_header())
         else:
-            result = requests.post(self.delete_url,
-                                   json={'doc_ids': doc_ids},
-                                   headers=self._get_header())
+            body['doc_ids'] = doc_ids
+
+        result = requests.post(self.delete_url, json=body, headers=self._get_header())
         return result
 
-    def publish(self, encoder_id=None, db_encoder_id=None, publish_args=None, sync=True):
-        body = {}
-        if encoder_id is not None:
-            body['encoder_id'] = encoder_id
-
-        if db_encoder_id is not None:
-            body['db_encoder_id'] = db_encoder_id
-
-        if publish_args is not None:
-            body['publish_args'] = publish_args
-
+    def reindex(self, params=None, sync=True):
+        body = {'params': params} if params is not None else {}
         result = requests.post(self.publish_url, json=body, headers=self._get_header())
         if result.status_code > 299:
             raise Exception(result.json())
