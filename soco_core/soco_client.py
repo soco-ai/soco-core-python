@@ -125,7 +125,7 @@ class SOCOClient(object):
             body = {"data": batch}
             result = requests.post(self.add_url, json=body, headers=self._get_header())
             if result.status_code >= 300:
-                raise Exception("Error in appending to index at SOCO servers")
+                raise Exception("Error in appending to index at SOCO servers {}".format(result.text))
 
             job_results.append(json.loads(result.text))
 

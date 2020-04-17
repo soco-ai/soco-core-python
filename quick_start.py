@@ -2,12 +2,12 @@ from soco_core.soco_client import SOCOClient
 from soco_core.examples import load_example_doc_data
 
 if __name__ == '__main__':
-    ADMIN_API_KEY = '898706a0-ecb2-457d-8f89-eea1c406f0ca'
+    ADMIN_API_KEY = '[ADMIN_KEY_API_KEY]'
     a_client = SOCOClient(ADMIN_API_KEY)
 
     # add data
     print("Add some data to the index")
-    docs = load_example_doc_data(['mr-sun.json', 'technology.json'])
+    docs = load_example_doc_data(['mr-sun.json', 'technology.json', 'chat.json'])
     a_client.delete_data()
     a_client.add_data(docs)
     print("Read {} documents".format(len(a_client.read_data())))

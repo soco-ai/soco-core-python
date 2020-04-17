@@ -43,6 +43,7 @@
   ],
   "meta": {
     "src": "wikipedia"
-  }
+  },
+  "doc_type": "soco_doc"
 }
 

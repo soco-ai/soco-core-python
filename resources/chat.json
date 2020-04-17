@@ -1,0 +1,59 @@
+{
+  "data": [
+    {
+      "answer": {
+        "value": "My name is Mr.SOCO"
+      },
+      "questions": [
+        {
+          "value": "what is your name?",
+          "displayable": true
+        },
+        {
+          "value": "how can I call you?",
+          "displayable": false
+        }
+      ],
+      "meta": {
+        "category": "identity"
+      }
+    },
+    {
+      "answer": {
+        "value": "I am 1 year old."
+      },
+      "questions": [
+        {
+          "value": "what is your age?",
+          "displayable": true
+        },
+        {
+          "value": "how old are you?",
+          "displayable": false
+        }
+      ],
+      "meta": {
+        "category": "identity"
+      }
+    },
+    {
+      "answer": {
+        "value": "I am an AI assistance."
+      },
+      "questions": [
+        {
+          "value": "what do you do?",
+          "displayable": true
+        }
+      ],
+      "meta": {
+        "category": "profession"
+      }
+    }
+  ],
+  "meta": {
+    "src": "chat"
+  },
+  "doc_type": "soco_faq"
+}
+
