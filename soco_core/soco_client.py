@@ -76,7 +76,8 @@ class SOCOClient(object):
                 if k in item:
                     new_dict[k] = item[k]
             new_dicts.append(new_dict)
-        if not colList: colList = list(new_dicts[0].keys() if new_dicts else [])
+        myDict = new_dicts
+        if not colList: colList = list(myDict[0].keys() if myDict else [])
         myList = [colList]  # 1st row = header
         for item in myDict: myList.append([str(item[col] if item[col] is not None else '') for col in colList])
         colSize = [max(map(len, col)) for col in zip(*myList)]
@@ -178,15 +179,15 @@ class SOCOClient(object):
         if result.status_code > 299:
             raise Exception(result.json())
         if sync:
-            self.wait_for_ready(rep["op_id"], verbose=True)
+            self.wait_for_ready( rep["op_id"], verbose=True)
             print("Index is ready!")
 
         return result
 
     def abort(self, sync=True):
         result = requests.post(self.abort_url, headers=self._get_header())
-        rep = result.json()
+        #rep = result.json()
         if sync:
-            self.wait_for_ready(rep["op_id"], verbose=True)
+            self.wait_for_ready(verbose=True)
 
         return result
