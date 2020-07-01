@@ -97,7 +97,10 @@ class SOCOClient(object):
             elapsed_time = int(time.time() - start_time)
 
             if verbose:
-                self.printTable(state["progress"])
+                try:
+                    self.printTable(state["progress"])
+                except:
+                    print(state["progress"])
 
             if 0 < timeout < elapsed_time:
                 print("Time out!")
