@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-VERSION = '0.14.3'
+VERSION = '0.14.4'
 setuptools.setup(
     name="soco-core-python",
     version=VERSION,

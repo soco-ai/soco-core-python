@@ -75,6 +75,8 @@ class SOCOClient(object):
             for k in ["job_id","done","total", "enqueued_at","queue","status","started_at","type"]:
                 if k in item:
                     new_dict[k] = item[k]
+                else:
+                    new_dict[k] = ""
             new_dicts.append(new_dict)
         myDict = new_dicts
         if not colList: colList = list(myDict[0].keys() if myDict else [])

@@ -2,7 +2,7 @@ from soco_core.soco_client import SOCOClient
 from soco_core.examples import load_example_doc_data
 
 if __name__ == '__main__':
-    ADMIN_API_KEY = '[ADMIN_KEY_API_KEY]'
+    ADMIN_API_KEY = '44188765-3221-4717-b235-7ac552354565'
     a_client = SOCOClient(ADMIN_API_KEY)
 
     # add data
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     a_client.reindex()
 
     print("Make a query")
-    QUERY_API_KEY = '[QUERY_API_KEY]'
+    QUERY_API_KEY = '44188765-3221-4717-b235-7ac552354565'
     q_client = SOCOClient(QUERY_API_KEY)
     responses = q_client.query({"query": "what is the distance from earth to sun?", "n_best": 10})
     SOCOClient.pprint(responses)
